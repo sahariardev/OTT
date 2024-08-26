@@ -1,10 +1,10 @@
 import AWS from 'aws-sdk';
-import fs from 'fs';
 
 export const uploadFileToS3 = (req, res) => {
     if (!req.file) {
         console.log('file not present in request');
-        return;
+
+        return res.status(400).send('No file received');
     }
 
     const file = req.file;
@@ -25,9 +25,9 @@ export const uploadFileToS3 = (req, res) => {
 
     s3.upload(params, (err, data) => {
         if (err) {
-            res.status(404).send('File could not be uploaded');
+            return res.status(404).send('File could not be uploaded');
         } else {
-            res.status(200).send('File uploaded successfully')
+            return res.status(200).send('File uploaded successfully')
         }
     });
 }
