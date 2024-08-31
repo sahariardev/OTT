@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import uploadRoutes from "./routes/upload.routes.js";
 import cors from 'cors'
+import kafkaPublisherRoute from "./routes/kafka.publisher.route.js";
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ app.use(cors({
     origin: '*'
 }));
 app.use('/upload', uploadRoutes);
-
+app.use('/publish', kafkaPublisherRoute);
 app.listen(port, () => {
     console.log(`app started on port${port}`);
 });
