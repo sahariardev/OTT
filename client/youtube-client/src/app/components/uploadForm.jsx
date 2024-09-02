@@ -6,7 +6,6 @@ const UploadForm = () => {
 
     const [selectedFile, setSelectedFile] = useState(null);
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         handleFileUpload(selectedFile);
@@ -15,14 +14,32 @@ const UploadForm = () => {
     const handleFileUpload = async (file) => {
         try {
 
-            const formData = new FormData();
-            formData.append('file', file);
-            const res = await axios.post('http://localhost:8080/upload', formData, {
-                headers: {
-                    'Content-Type' : 'multipart/form-data'
-                }
-            });
-            console.log(res.data)
+            const chunkSize = 100 * 1024 * 1024;
+            const totalchunks = Math.ceil(file.size / chunkSize);
+
+            console.log(file.size);
+            console.log(chunkSize);
+            console.log(totalchunks);
+
+            let start = 0;
+            for (let chunkIndex = 0; chunkIndex < totalchunks; chunkIndex++) {
+                const chunk = file.slice(start, start + chunkSize);
+                start = start + chunkSize;
+
+                const formData = new FormData();
+                formData.append("filename", file.name);
+                formData.append("chunk", chunk);
+                formData.append("totalChunks", totalchunks);
+                formData.append("chunkIndex", chunkIndex);
+
+                const res = await axios.post('http://localhost:8080/upload', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                console.log(res.data)
+
+            }
         } catch (error) {
             console.log('Something went wrong' + error);
         }

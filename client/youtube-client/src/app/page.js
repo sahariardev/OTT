@@ -4,11 +4,11 @@ import UploadForm from "@/app/components/uploadForm";
 import AuthPage from "@/app/pages/AuthPage";
 
 const Home = () => {
-  return (
-      <div>
-          <AuthPage/>
-      </div>
-  );
+    return (
+        <div>
+            <UploadForm/>
+        </div>
+    );
 }
 
 export default Home;
