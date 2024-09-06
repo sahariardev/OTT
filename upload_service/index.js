@@ -15,7 +15,7 @@ app.use(cors({
     origin: '*'
 }));
 app.use('/upload', uploadRoutes);
-app.use('/publish', kafkaPublisherRoute);
+//app.use('/publish', kafkaPublisherRoute);
 app.listen(port, () => {
     console.log(`app started on port${port}`);
 });

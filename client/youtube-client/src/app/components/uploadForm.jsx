@@ -28,6 +28,10 @@ const UploadForm = () => {
             const chunkSize = 5 * 1024 * 1024;
             const totalchunks = Math.ceil(file.size / chunkSize);
 
+            console.log(totalchunks);
+
+            const uploadPromises = [];
+
             let start = 0;
             for (let chunkIndex = 0; chunkIndex < totalchunks; chunkIndex++) {
                 const chunk = file.slice(start, start + chunkSize);
@@ -40,18 +44,34 @@ const UploadForm = () => {
                 formData.append("chunkIndex", chunkIndex);
                 formData.append("uploadId", uploadId);
 
-                const res = await axios.post('http://localhost:8080/upload', formData, {
+                const uploadPromise = axios.post('http://localhost:8080/upload', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-                console.log(res.data);
+
+                uploadPromises.push(uploadPromise);
             }
+
+            const responses = await Promise.all(uploadPromises);
+
+            const etags = [];
+
+            responses.forEach((response, index) => {
+                etags.push(
+                    {
+                        ETag: response.data.ETag,
+                        PartNumber: response.data.partNumber
+                    }
+                );
+                console.log(`Response from upload ${index + 1}:`, response);
+            });
 
             const completeRes = await axios.post('http://localhost:8080/upload/complete', {
                 filename: file.name,
                 totalchunks: totalchunks,
                 uploadId: uploadId,
+                etags: JSON.stringify(etags)
             });
         } catch (error) {
             console.log('Something went wrong' + error);
