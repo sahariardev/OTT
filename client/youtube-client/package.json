@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "axios": "^1.7.5",
+    "hls": "^0.0.1",
+    "hls.js": "^1.5.15",
     "next": "14.2.6",
     "next-auth": "^4.24.7",
     "react": "^18",
